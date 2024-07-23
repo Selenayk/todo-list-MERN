@@ -7,11 +7,20 @@ import {
   getTodoItemsController,
   getTodoListsController,
 } from '../controllers/TodoListController.js';
+import {
+  createTodoListSchema,
+  updateTodoListSchema,
+} from '../schemas/todoListSchema.js';
+import validateRequest from '../middlewares/validateRequest.js';
 
 const router = express.Router();
 
 // Create a new Todo List
-router.post('/lists', createTodoListController);
+router.post(
+  '/lists',
+  validateRequest(createTodoListSchema),
+  createTodoListController
+);
 
 // Get all Todo Lists for a user
 router.get('/lists', getTodoListsController);
@@ -20,9 +29,13 @@ router.get('/lists', getTodoListsController);
 router.get('/lists/:listId/items', getTodoItemsController);
 
 // Update a Todo List
-router.patch('/lists/:listId', updateTodoListController);
+router.patch(
+  '/lists/:listId',
+  validateRequest(updateTodoListSchema),
+  updateTodoListController
+);
 
-// Delete a ToDo
+// Delete a Todo List
 router.delete('/lists/:id', deleteTodoListController);
 
 export default router;
