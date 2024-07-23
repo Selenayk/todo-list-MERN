@@ -5,7 +5,10 @@ import morgan from 'morgan';
 import bodyParser from 'body-parser';
 import dotenv from 'dotenv';
 import cors from 'cors';
-import AuthRoute from './routes/auth.js';
+import AuthRouter from './routes/auth.js';
+import todoRouter from './routes/todo.js';
+import todoItemRouter from './routes/todoItem.js';
+import authenticate from './middlewares/authenticate.js';
 
 dotenv.config();
 const app = express();
@@ -34,4 +37,6 @@ app.get('/', (req, res) => {
   return res.status(200).send('Welcome to todo-list-MERN project.');
 });
 
-app.use('/api/auth', AuthRoute);
+app.use('/api/auth', AuthRouter);
+app.use('/api/todo', authenticate, todoRouter);
+app.use('/api/todo', authenticate, todoItemRouter);

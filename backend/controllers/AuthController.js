@@ -2,6 +2,14 @@ import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
+const generateAccessToken = (user) => {
+  return jwt.sign(
+    { sub: user._id, email: user.email },
+    process.env.ACCESS_TOKEN_SECRET,
+    { expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME || '1h' }
+  );
+};
+
 const register = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -34,18 +42,20 @@ const login = async (req, res) => {
 
     const accessToken = generateAccessToken(user);
     const refreshToken = jwt.sign(
-      { userId: user._id },
-      process.env.REFRESH_TOKEN_SECRET
+      { sub: user._id },
+      process.env.REFRESH_TOKEN_SECRET,
+      { expiresIn: process.env.REFRESH_TOKEN_EXPIRE_TIME || '7d' }
     );
 
     res.json({ message: 'Login Successful!', accessToken, refreshToken });
   } catch (error) {
     res.status(500).json({ message: 'An error Occurred!', error });
+    console.log(error);
   }
 };
 
 const refreshToken = (req, res) => {
-  const refreshToken = req.body.refreshToken;
+  const { refreshToken } = req.body;
 
   if (!refreshToken) {
     return res.status(400).json({ message: 'Refresh token is required!' });
@@ -59,19 +69,9 @@ const refreshToken = (req, res) => {
         return res.status(403).json({ message: 'Invalid refresh token!' });
       }
 
-      const accessToken = generateAccessToken({ userId: decodedToken.userId });
+      const accessToken = generateAccessToken({ userId: decodedToken.sub });
 
       res.json({ message: 'Token refreshed successfully!', accessToken });
-    }
-  );
-};
-
-const generateAccessToken = (user) => {
-  return jwt.sign(
-    { userId: user._id, email: user.email },
-    process.env.ACCESS_TOKEN_SECRET,
-    {
-      expiresIn: process.env.ACCESS_TOKEN_EXPIRE_TIME,
     }
   );
 };
