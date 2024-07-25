@@ -16,8 +16,8 @@ const LoginPage = () => {
       });
 
       if (res.status === 200) {
-        localStorage.setItem('token', res.data.accessToken);
-        navigate('/'); 
+        localStorage.setItem('accessToken', res.data.accessToken);
+        navigate('/todo/lists'); 
       }
     } catch (error) {
       console.error('Login failed:', error);

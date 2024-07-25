@@ -14,7 +14,7 @@ const createTodoItemController = async (req, res) => {
       return res.status(404).json({ message: 'List Not Found!' });
     }
 
-    const newTodoItem = await ToDoItem.create({
+    const newTodoItem = await TodoItem.create({
       title,
       dueDate,
       list: listId,

@@ -16,3 +16,7 @@ api.interceptors.request.use((config) => {
 
 export const register = (username, email, password) =>
   api.post('/auth/register', { username, email, password });
+
+export const getTodoLists = () => api.get('/todo/lists');
+export const createTodoLists = (title, description) =>
+  api.post('/todo/lists', { title, description });
