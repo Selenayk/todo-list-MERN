@@ -90,8 +90,8 @@ const TodoListPage = () => {
       <div className="flex items-center mb-3 ml-5">
         <span className="mr-2 text-xl">Add Todo List</span>
         <Link to="/todo/lists/create">
-          <button className='flex items-center'>
-            <IoIosAddCircleOutline className="text-cyan-500 text-3xl " />
+          <button className="flex items-center text-cyan-500 text-3xl">
+            <IoIosAddCircleOutline />
           </button>
         </Link>
       </div>
