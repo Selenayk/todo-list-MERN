@@ -33,7 +33,10 @@ const createTodoListController = async (req, res) => {
 // Get all Todo Lists for a user
 const getTodoListsController = async (req, res) => {
   try {
-    const todoLists = await TodoList.find({ user: req.user.id });
+    const todoLists = await TodoList.find({
+      user: req.user.id,
+      deletedAt: null,
+    });
     res.status(200).json(todoLists);
   } catch (error) {
     console.log({ error });
@@ -73,14 +76,21 @@ const updateTodoListController = async (req, res) => {
 // Delete a Todo List
 const deleteTodoListController = async (req, res) => {
   const session = await mongoose.startSession();
+  session.startTransaction();
 
   try {
     const { listId } = req.params;
     if (!listId) {
-      return res.status(404).json();
+      await session.abortTransaction();
+      return res.status(404).json({ message: 'List not found', error });
     }
 
-    session.startTransaction();
+    const todoList = await TodoList.findById(listId).session(session);
+    if (!todoList) {
+      await session.abortTransaction();
+      return res.status(404).json({ message: 'Todo List not found' });
+    }
+
     await TodoList.findByIdAndUpdate(listId, { deletedAt: new Date() }).session(
       session
     );
@@ -88,6 +98,7 @@ const deleteTodoListController = async (req, res) => {
       { list: listId },
       { deletedAt: new Date() }
     ).session(session);
+
     await session.commitTransaction();
 
     res.status(200).json({ message: 'Todo List deleted successfully!' });
@@ -97,7 +108,7 @@ const deleteTodoListController = async (req, res) => {
       .status(500)
       .json({ message: 'An error occurred while deleting ToDo.', error });
   } finally {
-    await session.endSession();
+    session.endSession();
   }
 };
 

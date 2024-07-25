@@ -1,12 +1,15 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import TodoListModal from './TodoListModal';
+import { GoTrash } from 'react-icons/go';
 
 const TodoListCard = ({ todoList }) => {
   const [showModal, setShowModal] = useState(false);
   const [todoItems, setTodoItems] = useState([]);
   const [loadingItems, setLoadingItems] = useState(false);
+  const navigate = useNavigate();
 
   const handleViewMore = async () => {
     setShowModal(true);
@@ -32,6 +35,10 @@ const TodoListCard = ({ todoList }) => {
 
   return (
     <div className="border-2 border-gray-500 rounded-lg p-4 m-4 relative hover:shadow-2xl">
+      <GoTrash
+        className="absolute top-4 right-4 text-red-600 text-2xl cursor-pointer"
+        onClick={() => navigate(`/todo/lists/${todoList._id}/delete`)}
+      />
       <h2 className="text-xl font-semibold">{todoList.title}</h2>
       <p className="text-gray-600">{todoList.description}</p>
       <button

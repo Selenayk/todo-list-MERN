@@ -36,6 +36,6 @@ router.patch(
 );
 
 // Delete a Todo List
-router.delete('/lists/:id', deleteTodoListController);
+router.delete('/lists/:listId', deleteTodoListController);
 
 export default router;
