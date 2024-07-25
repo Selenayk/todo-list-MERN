@@ -31,11 +31,11 @@ const TodoListCard = ({ todoList }) => {
   };
 
   return (
-    <div className="border-2 border-gray-500 rounded-lg p-4 m-4 relative hover:shadow-xl">
+    <div className="border-2 border-gray-500 rounded-lg p-4 m-4 relative hover:shadow-2xl">
       <h2 className="text-xl font-semibold">{todoList.title}</h2>
       <p className="text-gray-600">{todoList.description}</p>
       <button
-        className="mt-4 px-4 py-2 bg-cyan-500 text-white rounded"
+        className="mt-4 px-4 py-2 bg-cyan-500 text-white rounded hover:bg-cyan-600"
         onClick={handleViewMore}
       >
         View More
