@@ -6,6 +6,7 @@ import {
   updateTodoListController,
   getTodoItemsController,
   getTodoListsController,
+  getTodoListByIdController,
 } from '../controllers/TodoListController.js';
 import {
   createTodoListSchema,
@@ -27,6 +28,9 @@ router.get('/lists', getTodoListsController);
 
 // Get Items for a Todo List
 router.get('/lists/:listId/items', getTodoItemsController);
+
+//Get One List
+router.get('/lists/:listId', getTodoListByIdController);
 
 // Update a Todo List
 router.patch(

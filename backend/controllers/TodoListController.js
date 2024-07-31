@@ -44,6 +44,28 @@ const getTodoListsController = async (req, res) => {
   }
 };
 
+// Get a specific Todo List by ID
+const getTodoListByIdController = async (req, res) => {
+  const { listId } = req.params;
+
+  try {
+    const todoList = await TodoList.findOne({
+      _id: listId,
+      user: req.user.id,
+      deletedAt: null,
+    });
+
+    if (!todoList) {
+      return res.status(404).json({ message: 'Todo List not found' });
+    }
+
+    res.status(200).json(todoList);
+  } catch (error) {
+    console.error({ error });
+    res.status(500).json({ message: 'An error occurred', error });
+  }
+};
+
 // Update a Todo List
 const updateTodoListController = async (req, res) => {
   try {
@@ -136,4 +158,5 @@ export {
   updateTodoListController,
   deleteTodoListController,
   getTodoItemsController,
+  getTodoListByIdController,
 };

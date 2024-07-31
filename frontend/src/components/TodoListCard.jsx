@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import TodoListModal from './TodoListModal';
 import { GoTrash } from 'react-icons/go';
+import { BsPatchPlus } from 'react-icons/bs';
 
 const TodoListCard = ({ todoList }) => {
   const [showModal, setShowModal] = useState(false);
@@ -38,6 +39,10 @@ const TodoListCard = ({ todoList }) => {
       <GoTrash
         className="absolute top-4 right-4 text-red-600 text-2xl cursor-pointer"
         onClick={() => navigate(`/todo/lists/${todoList._id}/delete`)}
+      />
+      <BsPatchPlus
+        className="absolute top-14 right-4 text-green-500 text-2xl cursor-pointer"
+        onClick={() => navigate(`/todo/lists/${todoList._id}/add-item`)}
       />
       <h2 className="text-xl font-semibold">{todoList.title}</h2>
       <p className="text-gray-600">{todoList.description}</p>
