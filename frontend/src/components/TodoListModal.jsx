@@ -1,14 +1,14 @@
 import PropTypes from 'prop-types';
 import { AiOutlineClose } from 'react-icons/ai';
 import { GoDot, GoDotFill } from 'react-icons/go';
-// import { useParams } from 'react-router-dom';
 import { BsPatchPlus } from 'react-icons/bs';
 import { LuDot } from 'react-icons/lu';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { GoTrash } from 'react-icons/go';
+import '../styles/custom-scrollbar.css'
 
 const TodoListModal = ({ todoList, todoItems, loadingItems, onClose }) => {
-  // const { listId } = useParams();
   const [items, setItems] = useState(todoItems);
   const [title, setTitle] = useState('');
   const [dueDate, setDueDate] = useState('');
@@ -84,6 +84,31 @@ const TodoListModal = ({ todoList, todoItems, loadingItems, onClose }) => {
     }
   };
 
+  const handleDeleteTodoListItem = async (itemId) => {
+    try {
+      const token = localStorage.getItem('accessToken');
+
+      await axios.delete(`http://localhost:3000/api/todo/lists/${todoList._id}/items/${itemId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
+
+      const res = await axios.get(`http://localhost:3000/api/todo/lists/${todoList._id}/items`,{
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true
+      })
+
+      setItems(res.data)
+    } catch (error) {
+      console.log(error);
+    } 
+  };
+
+
   return (
     <div
       className="fixed bg-black bg-opacity-60 top-0 left-0 right-0 bottom-0 z-50 flex justify-center items-center"
@@ -124,12 +149,14 @@ const TodoListModal = ({ todoList, todoItems, loadingItems, onClose }) => {
             <BsPatchPlus />
           </button>
         </div>
-        <div className="mt-4">
+        <div
+          className="mt-4 scrollable-container"
+        >
           {loadingItems ? (
             <p>Loading items...</p>
           ) : (
             <div>
-              <h4 className="text-gray-600 text-sm absolute right-4 top-40">
+              <h4 className="text-gray-600 text-sm absolute right-10 top-40">
                 Due Date
               </h4>
               <ul className="list-disc list-inside">
@@ -152,11 +179,16 @@ const TodoListModal = ({ todoList, todoItems, loadingItems, onClose }) => {
                       </h1>
                     </div>
                     <div
-                      className={`ml-auto ${
+                      className={`ml-auto mr-2 ${
                         item.completed ? 'text-gray-300' : ''
                       }`}
                     >
                       <h1>{item.dueDate}</h1>
+                    </div>
+                    <div>
+                      <button className="text-red-600 mr-3" onClick={() => handleDeleteTodoListItem(item._id)}>
+                        <GoTrash />
+                      </button>
                     </div>
                   </li>
                 ))}
