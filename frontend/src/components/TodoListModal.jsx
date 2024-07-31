@@ -1,15 +1,17 @@
 import PropTypes from 'prop-types';
 import { AiOutlineClose } from 'react-icons/ai';
 import { GoDot, GoDotFill } from 'react-icons/go';
-import { useNavigate } from 'react-router-dom';
+// import { useParams } from 'react-router-dom';
 import { BsPatchPlus } from 'react-icons/bs';
 import { LuDot } from 'react-icons/lu';
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 
 const TodoListModal = ({ todoList, todoItems, loadingItems, onClose }) => {
+  // const { listId } = useParams();
   const [items, setItems] = useState(todoItems);
-  const navigate = useNavigate();
+  const [title, setTitle] = useState('');
+  const [dueDate, setDueDate] = useState('');
 
   useEffect(() => {
     setItems(todoItems);
@@ -48,6 +50,40 @@ const TodoListModal = ({ todoList, todoItems, loadingItems, onClose }) => {
     }
   };
 
+  const handleAddItem = async () => {
+    try {
+      const token = localStorage.getItem('accessToken');
+      const itemData = { title };
+      if (dueDate) {
+        itemData.dueDate = dueDate;
+      }
+      await axios.post(
+        `http://localhost:3000/api/todo/lists/${todoList._id}/items`,
+        itemData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+      const res = await axios.get(
+        `http://localhost:3000/api/todo/lists/${todoList._id}/items`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
+      setItems(res.data);
+      setTitle('');
+      setDueDate('');
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <div
       className="fixed bg-black bg-opacity-60 top-0 left-0 right-0 bottom-0 z-50 flex justify-center items-center"
@@ -67,22 +103,33 @@ const TodoListModal = ({ todoList, todoItems, loadingItems, onClose }) => {
           <LuDot className="text-gray-700 text-2xl" />
           <p className="my-1 text-gray-700">{todoList.description}</p>
         </div>
+        <div className="flex justify-items-start my-4">
+          <input
+            type="text"
+            placeholder="Title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className=" p-2 h-8 mb-4 w-4/5 mr-2 border-2 border-gray-300 rounded"
+          />
+          <input
+            type="date"
+            value={dueDate}
+            onChange={(e) => setDueDate(e.target.value)}
+            className=" p-2 h-8 mb-4 w-1/4 border-2 mr-2 border-gray-300 rounded"
+          />
+          <button
+            onClick={handleAddItem}
+            className="text-2xl mb-4 text-green-500 hover:text-green-600"
+          >
+            <BsPatchPlus />
+          </button>
+        </div>
         <div className="mt-4">
-          <div className="flex items-center mb-8 ml-1">
-            <button className="flex items-center text-green-500 text-3xl mr-2">
-              <BsPatchPlus
-                onClick={() => navigate(`/todo/lists/${todoList._id}/add-item`)}
-              />
-            </button>
-            <span className="mr-2 text-l font-semibold text-green-500">
-              Add Item
-            </span>
-          </div>
           {loadingItems ? (
             <p>Loading items...</p>
           ) : (
             <div>
-              <h4 className="text-gray-600 text-sm absolute right-4 top-36">
+              <h4 className="text-gray-600 text-sm absolute right-4 top-40">
                 Due Date
               </h4>
               <ul className="list-disc list-inside">
@@ -104,9 +151,11 @@ const TodoListModal = ({ todoList, todoItems, loadingItems, onClose }) => {
                         {item.title}
                       </h1>
                     </div>
-                    <div className={`ml-auto ${
-                          item.completed ? 'text-gray-300' : ''
-                        }`}>
+                    <div
+                      className={`ml-auto ${
+                        item.completed ? 'text-gray-300' : ''
+                      }`}
+                    >
                       <h1>{item.dueDate}</h1>
                     </div>
                   </li>

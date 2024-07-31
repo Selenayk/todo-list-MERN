@@ -2,7 +2,7 @@ import Joi from 'joi';
 
 const createTodoListSchema = Joi.object({
   title: Joi.string().required(),
-  description: Joi.string().required(),
+  description: Joi.string().optional(),
 });
 
 const updateTodoListSchema = Joi.object({

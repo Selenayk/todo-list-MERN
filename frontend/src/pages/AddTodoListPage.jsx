@@ -1,8 +1,7 @@
 import { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { IoMdArrowRoundBack } from "react-icons/io";
-
+import { IoMdArrowRoundBack } from 'react-icons/io';
 
 const AddTodoListPage = () => {
   const [title, setTitle] = useState('');
@@ -14,20 +13,20 @@ const AddTodoListPage = () => {
 
     try {
       const token = localStorage.getItem('accessToken');
+      const listData = { title };
+      if (description) {
+        listData.description = description;
+      }
       if (!token) {
         throw new Error('No token found');
       }
 
-      await axios.post(
-        'http://localhost:3000/api/todo/lists',
-        { title, description },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-          withCredentials: true,
-        }
-      );
+      await axios.post('http://localhost:3000/api/todo/lists', listData, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      });
       navigate('/todo/lists');
     } catch (error) {
       console.log(error);

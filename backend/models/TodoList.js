@@ -3,7 +3,7 @@ import mongoose from 'mongoose';
 const todoListSchema = new mongoose.Schema(
   {
     title: { type: String, required: true },
-    description: { type: String, required: true },
+    description: { type: String },
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     deletedAt: { type: Date, default: null },
   },
