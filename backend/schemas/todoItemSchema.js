@@ -8,7 +8,7 @@ const createTodoItemSchema = Joi.object({
 const updateTodoItemSchema = Joi.object({
   title: Joi.string().optional,
   dueDate: Joi.date().optional(),
-  completed: Joi.date().optional(),
+  completed: Joi.boolean().optional(),
   newListId: Joi.string().optional(),
 });
 

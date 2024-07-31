@@ -35,7 +35,7 @@ const TodoListCard = ({ todoList }) => {
   };
 
   return (
-    <div className="border-2 border-gray-500 rounded-lg p-4 m-4 relative hover:shadow-2xl">
+    <div className="border-2 border-gray-500 rounded-lg p-4 m-4 relative hover:shadow-2xl cursor-pointer">
       <GoTrash
         className="absolute top-4 right-4 text-red-600 text-2xl cursor-pointer"
         onClick={() => navigate(`/todo/lists/${todoList._id}/delete`)}
