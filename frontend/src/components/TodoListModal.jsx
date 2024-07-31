@@ -2,11 +2,16 @@ import PropTypes from 'prop-types';
 import { AiOutlineClose } from 'react-icons/ai';
 import { GoDot, GoDotFill } from 'react-icons/go';
 import { BsPatchPlus } from 'react-icons/bs';
-import { LuDot } from 'react-icons/lu';
+import { IoInformationCircleOutline } from "react-icons/io5";
 import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { GoTrash } from 'react-icons/go';
-import '../styles/custom-scrollbar.css'
+import '../styles/custom-scrollbar.css';
+
+const formatDate = (dateString) => {
+  const date = new Date(dateString);
+  return isNaN(date.getTime()) ? '' : date.toISOString().split('T')[0]
+};
 
 const TodoListModal = ({ todoList, todoItems, loadingItems, onClose }) => {
   const [items, setItems] = useState(todoItems);
@@ -88,26 +93,31 @@ const TodoListModal = ({ todoList, todoItems, loadingItems, onClose }) => {
     try {
       const token = localStorage.getItem('accessToken');
 
-      await axios.delete(`http://localhost:3000/api/todo/lists/${todoList._id}/items/${itemId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        withCredentials: true,
-      });
+      await axios.delete(
+        `http://localhost:3000/api/todo/lists/${todoList._id}/items/${itemId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
 
-      const res = await axios.get(`http://localhost:3000/api/todo/lists/${todoList._id}/items`,{
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        withCredentials: true
-      })
+      const res = await axios.get(
+        `http://localhost:3000/api/todo/lists/${todoList._id}/items`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true,
+        }
+      );
 
-      setItems(res.data)
+      setItems(res.data);
     } catch (error) {
       console.log(error);
-    } 
+    }
   };
-
 
   return (
     <div
@@ -125,8 +135,8 @@ const TodoListModal = ({ todoList, todoItems, loadingItems, onClose }) => {
 
         <h1 className="my-1 font-bold text-2xl">{todoList.title}</h1>
         <div className="flex items-center">
-          <LuDot className="text-gray-700 text-2xl" />
-          <p className="my-1 text-gray-700">{todoList.description}</p>
+          <IoInformationCircleOutline className="text-gray-600 text-xl mt-1 mr-2" />
+          <p className="my-2 text-gray-700">{todoList.description}</p>
         </div>
         <div className="flex justify-items-start my-4">
           <input
@@ -149,14 +159,12 @@ const TodoListModal = ({ todoList, todoItems, loadingItems, onClose }) => {
             <BsPatchPlus />
           </button>
         </div>
-        <div
-          className="mt-4 scrollable-container"
-        >
+        <div className="mt-4 scrollable-container">
           {loadingItems ? (
             <p>Loading items...</p>
           ) : (
             <div>
-              <h4 className="text-gray-600 text-sm absolute right-10 top-40">
+              <h4 className="text-gray-600 text-sm absolute right-16 top-40">
                 Due Date
               </h4>
               <ul className="list-disc list-inside">
@@ -183,10 +191,13 @@ const TodoListModal = ({ todoList, todoItems, loadingItems, onClose }) => {
                         item.completed ? 'text-gray-300' : ''
                       }`}
                     >
-                      <h1>{item.dueDate}</h1>
+                      <h1>{item.dueDate ? formatDate(item.dueDate) : ''}</h1>
                     </div>
                     <div>
-                      <button className="text-red-600 mr-3" onClick={() => handleDeleteTodoListItem(item._id)}>
+                      <button
+                        className="text-red-600 mr-3"
+                        onClick={() => handleDeleteTodoListItem(item._id)}
+                      >
                         <GoTrash />
                       </button>
                     </div>
